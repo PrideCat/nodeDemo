@@ -1,0 +1,78 @@
+{
+  "compilerOptions": {
+    /*基本选项 */
+    "target": "es6",
+    /* 指定ECMAScript目标版本：'ES3'（默认），'ES5'，'ES2015'，'ES2016'，'ES2017'，'ES2018'或'ESNEXT'。 */
+    "module": "commonjs",
+    /* 指定模块代码生成：'none'，'commonjs'，'amd'，'system'，'umd'，'es2015'或'ESNext'。 */
+    // "lib": [],                             /* 指定要包含在编译中的库文件。 */
+    "allowJs": true,
+    /* 允许编译javascript文件。 */
+    // "checkJs": true,                       /* 报告.js文件中的错误。 */
+    // "jsx": "preserve",                     /* 指定JSX代码生成：'preserve'，'react-native'或'react'。 */
+    // "declaration": true,                   /* 生成相应的“.d.ts”文件。 */
+    // "declarationMap": true,                /* 为每个对应的“.d.ts”文件生成源图。 */
+    "sourceMap": true,
+    /* 生成相应的'.map'文件。 */
+    // "outFile": "./",                       /* 连接并将输出发送到单个文件。 */
+    "outDir": "./dist",
+    /* 将输出结构重定向到目录。 */
+    "rootDir": "./src",
+    /* 指定输入文件的根目录。用于通过--outDir控制输出目录结构。 */
+    // "composite": true,                     /* 启用项目编译 */
+    "removeComments": true,
+    /* 不要向输出发出注释。 */
+    // "noEmit": true,                        /* 不要发出输出。 */
+    // "importHelpers": true,                 /* 导入从'tslib'发出助手。 */
+    // "downlevelIteration": true,            /* 在定位“ES5”或“ES3”时，为“for-of”，“展开”和“解构”中的迭代提供全面支持。 */
+    "isolatedModules": true,
+    /* 将每个文件透明化为单独的模块（类似于'ts.transpileModule'）。 */
+
+    /* 严格的类型检查选项 */
+    "strict": true,
+    /* 启用所有严格的类型检查选项。 */
+    "noImplicitAny": true,
+    /* 使用隐含的“any”类型提高表达式和声明的错误。 */
+    "strictNullChecks": true,
+    /* 启用严格的空检查。 */
+    // "strictFunctionTypes": true,           /* 启用严格检查功能类型。 */
+    // "strictBindCallApply": true,           /* 在函数上启用严格的“绑定”，“调用”和“应用”方法。 */
+    // "strictPropertyInitialization": true,  /* 在类中启用严格检查属性初始化。 */
+    // "noImplicitThis": true,                /* 使用隐含的“any”类型提高'this'表达式的错误。 */
+    // "alwaysStrict": true,                  /* 在严格模式下解析并为每个源文件发出“use strict”。 */
+
+    /* 额外的支票 */
+    "noUnusedLocals": true,
+    /* 报告未使用的本地人员的错误。 */
+    "noUnusedParameters": true,
+    /* 报告未使用参数的错误。 */
+    // "noImplicitReturns": true,             /* 当函数中的所有代码路径都没有返回值时报告错误。 */
+    // "noFallthroughCasesInSwitch": true,    /* 报告switch语句中的fallthrough案例的错误。 */
+
+    /* 模块分辨率选项 */
+    "moduleResolution": "node",
+    /* 指定模块解析策略：'node'（Node.js）或'classic'（TypeScript pre-1.6）。 */
+    // "baseUrl": "./",                       /* 用于解析非绝对模块名称的基目录。 */
+    // "paths": {},                           /* 一系列条目，将导入重新映射到相对于'baseUrl'的查找位置。 */
+    // "rootDirs": [],                        /* 根文件夹列表，其组合内容表示运行时项目的结构。 */
+    // "typeRoots": [],                       /* 要包含类型定义的文件夹列表。 */
+    // "types": [],                           /* 键入要包含在编译中的声明文件。 */
+    // "allowSyntheticDefaultImports": true,  /* 允许从没有默认导出的模块进行默认导入。这不会影响代码发出，只会影响类型检查。 */
+    "esModuleInterop": true,
+    /* 通过为所有导入创建命名空间对象，启用CommonJS和ES模块之间的互操作性。意味着'allowSyntheticDefaultImports'。 */
+    // "preserveSymlinks": true,              /* 不要解决符号链接的真实路径。 */
+
+    /* 源地图选项 */
+    // "sourceRoot": "",                      /* 指定调试器应该找到TypeScript文件而不是源位置的位置。 */
+    // "mapRoot": "",                         /* 指定调试器应该找到映射文件而不是生成位置的位置。 */
+    // "inlineSourceMap": true,               /* 使用源映射发出单个文件，而不是使用单独的文件。 */
+    "inlineSources": false,
+    /* 在单个文件中将源与源图一起发出;需要设置'--inlineSourceMap'或'--sourceMap'。 */
+
+    /* 实验选项 */
+    "experimentalDecorators": true,
+    /* 为ES7装饰器提供实验支持。 */
+    "emitDecoratorMetadata": true,
+    /* 为装饰器的发射类型元数据启用实验支持。 */
+  }
+}
