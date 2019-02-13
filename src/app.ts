@@ -8,5 +8,5 @@ app.use(async (ctx, next) => {
   ctx.response.body = '<h1>Hello, koa2!</h1>';
 });
 
-app.listen(8080);
-console.log('app started at port 8080...');
+app.listen(80);
+console.log('app started at port 80...');
