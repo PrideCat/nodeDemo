@@ -23,6 +23,7 @@
     "@types/koa-router": "^7.0.39",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
-    "koa-router": "^7.4.0"
+    "koa-router": "^7.4.0",
+    "monk": "^6.0.6"
   }
 }
