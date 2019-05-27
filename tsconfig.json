@@ -25,7 +25,7 @@
     // "noEmit": true,                        /* 不要发出输出。 */
     // "importHelpers": true,                 /* 导入从'tslib'发出助手。 */
     // "downlevelIteration": true,            /* 在定位“ES5”或“ES3”时，为“for-of”，“展开”和“解构”中的迭代提供全面支持。 */
-    "isolatedModules": true,
+    "isolatedModules": false,
     /* 将每个文件透明化为单独的模块（类似于'ts.transpileModule'）。 */
 
     /* 严格的类型检查选项 */

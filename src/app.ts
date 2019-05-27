@@ -1,52 +1,71 @@
+
+import fs from "fs";
 import Koa from "koa";
-import Router from "koa-router";
-import bodyParser from "koa-bodyparser";
-import monk from "monk";
+// import route from "koa-route";
+import WebSocket from "koa-websocket";
 
-const app = new Koa();
-const router = new Router();
-const db = monk("localhost:27017/runoob");
-const table = db.get("site");
+const app = WebSocket(new Koa());
+const ctxs: any[] = [];
+let fileArr: any[] = [];
+let targetPath = "./data";
+app.listen(8080);
 
-app.use(async (ctx, next) => {
-  console.log(`Process ${ctx.request.method} ${ctx.request.url}...`);
-  await next();
+const readStream = (url: string, callback: Function) => {
+
+    const stream = fs.createReadStream(url);
+    stream.on('open', (fd) => {
+        console.log('开始读取文件', fd);
+    });
+    stream.on('data', (data) => {
+        console.log('读取到数据：');
+        console.log(data);
+        if (callback) callback(data);
+    });
+    stream.on('end', () => {
+        console.log('文件已全部读取完毕');
+        stream.close();
+    });
+    stream.on('close', () => {
+        console.log('文件被关闭');
+    });
+    stream.on('error', (err) => {
+        console.log('读取文件失败', err);
+    });
+
+};
+
+fs.readdir(targetPath, (err, files) => {
+    if (err) throw err;
+    console.log(files);
+    fileArr = files;
 });
 
-app.use(bodyParser());
+app.ws.use((ctx) => {
 
-router.get('/', async (ctx) => {
-  ctx.response.body = `
-    <h1>Index</h1>
-    <form action="/signin" method="post">
-        <p>Name: <input name="name" value="koa"></p>
-        <p>Password: <input name="password" type="password"></p>
-        <p><input type="submit" value="Submit"></p>
-    </form>`;
+    ctxs.push(ctx);
+    console.log("当前角色id：", ctx.query.id);
+    console.log("当前人数：", ctxs.length);
+
+    ctxs.forEach((v: any) => {
+        fileArr.forEach((url: any) => {
+            readStream(`${targetPath}/${url}`, (data: any) => {
+                v.websocket.send(data)
+            })
+        })
+    })
+
+    ctx.websocket.on("message", (message) => {
+        console.log("message", message);
+        ctx.websocket.send(`收到客户端：${message}`);
+    });
+
+    ctx.websocket.on("close", (code, reason) => {
+        console.log("close", code, reason);
+        let index = ctxs.indexOf(ctx);
+        ctxs.splice(index, 1);
+    });
+
 });
 
-router.get('/data', async (ctx) => {
-  ctx.response.body = await table.find();
-});
-
-router.post('/signin', async (ctx) => {
-  const username = ctx.request.body.name || '';
-  const password = ctx.request.body.password || '';
-  console.log(`signin with name: ${username}, password: ${password}`);
-  if (username === 'koa' && password === '12345') {
-    ctx.response.body = `<h1>Welcome, ${username}!</h1>`;
-    table.insert({ username, password, createDate: new Date() });
-  } else {
-    ctx.response.body = `<h1>Login failed!</h1>
-        <p><a href="/">Try again</a></p>`;
-  }
-});
-
-app.use(router.routes());
-
-app.listen(80);
-console.log('app started at port 80...');
-
-
-
+console.log("服务启动，开启端口8080");
 

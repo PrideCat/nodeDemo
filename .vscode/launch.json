@@ -6,8 +6,9 @@
   "configurations": [{
     "type": "node",
     "request": "launch",
-    "name": "Launch Program",
+    "name": "run",
     "program": "${workspaceFolder}\\dist\\app.js",
+    "preLaunchTask": "tsc",
     "outFiles": [
       "${workspaceFolder}/**/*.js"
     ]
