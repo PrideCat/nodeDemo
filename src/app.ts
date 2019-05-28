@@ -8,6 +8,7 @@ import WebSocket from "koa-websocket"
 const app = WebSocket(new Koa())
 const ctxs: any[] = []
 let fileNames: any[] = []
+let storages: any = {};
 let targetPath = os.platform() == "win32" ? "./data/" : "../../record/"
 app.listen(80)
 
@@ -36,14 +37,27 @@ const readStream = (filename: string, callback: Function, complete: Function) =>
 
 }
 
+let recursiveFilesFlag = false;
 const recursiveFiles = (files: any[], callback: Function, ctx: any, i: number = 0) => {
-    ctx.websocket.send(`开始输出-文件==> ${files[i]}`)
-    readStream(files[i], (data: any) => {
-        if (callback) callback(data)
+    const file = files[i]
+    let index = 0
+    if (!file || recursiveFilesFlag) return
+    recursiveFilesFlag = true
+    ctx.websocket.send(`开始输出-文件==> ${file}`)
+    storages[file] = []
+    readStream(file, (data: any) => {
+        if (!storages[file][index]) {
+            storages[file][index] = data
+            if (callback) callback(data)
+        }
+        index++
     }, () => {
-        ctx.websocket.send(`输出结束-文件==> ${files[i]}`)
+        ctx.websocket.send(`输出结束-文件==> ${file}`)
         i++
-        if (i < files.length) recursiveFiles(files, callback, ctx, i)
+        if (i < files.length)
+            recursiveFiles(files, callback, ctx, i)
+        else
+            recursiveFilesFlag = false
     })
 }
 
@@ -53,37 +67,38 @@ const broadcast = (data: string) => {
     })
 }
 
-// const removeFiles = (files: any[]) => {
-//     files.forEach(v => {
-//         fs.unlink(targetPath + v, (err) => {
-//             if (err) throw err;
-//         })
-//     })
-//     files = [];
-// }
+const removeFiles = (files: any[]) => {
+    files.forEach(v => {
+        fs.unlink(targetPath + v, (err) => {
+            if (err) throw err;
+        })
+    })
+    files = [];
+}
 
-fs.readdir(targetPath, (err, files) => {
-    if (err) throw err
-    fileNames = files
-    // removeFiles(fileNames)
-    console.log(fileNames)
-})
+// fs.readdir(targetPath, (err, files) => {
+//     if (err) throw err
+//     fileNames = files
+//     // removeFiles(fileNames)
+//     console.log(fileNames)
+// })
 
 app.ws.use((ctx) => {
-    fs.watch(targetPath, (event, filename) => {
-        ctx.websocket.send('event is: ' + event)
-        if (filename) {
-            ctx.websocket.send('filename provided: ' + filename)
-        } else {
-            ctx.websocket.send('filename not provided')
-        }
-    })
+
     ctxs.push(ctx)
     ctx.websocket.send(`当前角色id：${ctx.query.id}`)
     broadcast(`当前连接人数：${ctxs.length}`)
-    recursiveFiles(fileNames, (data: any) => {
-        ctx.websocket.send(data)
-    }, ctx)
+
+    fs.watch(targetPath, (event, filename) => {
+        if (event == "change") {
+            if (fileNames.indexOf(filename) == -1) {
+                fileNames.push(filename)
+            }
+            recursiveFiles([filename], (data: any) => {
+                ctx.websocket.send(data)
+            }, ctx)
+        }
+    })
 
     ctx.websocket.on("message", (message) => {
         console.log("message", message)
@@ -95,6 +110,7 @@ app.ws.use((ctx) => {
         let index = ctxs.indexOf(ctx)
         ctxs.splice(index, 1)
         broadcast(`当前连接人数：${ctxs.length}`)
+        removeFiles(fileNames);
     })
 
 })
