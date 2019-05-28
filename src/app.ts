@@ -1,5 +1,6 @@
 
 import fs from "fs";
+import os from "os";
 import Koa from "koa";
 // import route from "koa-route";
 import WebSocket from "koa-websocket";
@@ -7,13 +8,12 @@ import WebSocket from "koa-websocket";
 const app = WebSocket(new Koa());
 const ctxs: any[] = [];
 let fileArr: any[] = [];
-// let targetPath = "./data";
-let targetPath = "../record";
+let targetPath = os.platform() == "win32" ? "./data/" : "../../record/";
 app.listen(80);
 
-const readStream = (url: string, callback: Function) => {
+const readStream = (filename: string, callback: Function, complete: Function) => {
 
-    const stream = fs.createReadStream(url);
+    const stream = fs.createReadStream(targetPath + filename);
     stream.on('open', (fd) => {
         console.log('开始读取文件', fd);
     });
@@ -25,6 +25,7 @@ const readStream = (url: string, callback: Function) => {
     stream.on('end', () => {
         console.log('文件已全部读取完毕');
         stream.close();
+        if (complete) complete();
     });
     stream.on('close', () => {
         console.log('文件被关闭');
@@ -33,6 +34,16 @@ const readStream = (url: string, callback: Function) => {
         console.log('读取文件失败', err);
     });
 
+};
+
+const recursiveFiles = (files: any[], callback: Function, ctx: any, i: number = 0) => {
+    ctx.websocket.send(`开始输出文件:${files[i]}`)
+    readStream(files[i], (data: any) => {
+        if (callback) callback(data)
+    }, () => {
+        i++;
+        if (i < files.length) recursiveFiles(files, callback, ctx, i)
+    })
 };
 
 fs.readdir(targetPath, (err, files) => {
@@ -47,13 +58,9 @@ app.ws.use((ctx) => {
     console.log("当前角色id：", ctx.query.id);
     console.log("当前人数：", ctxs.length);
 
-    ctxs.forEach((v: any) => {
-        fileArr.forEach((url: any) => {
-            readStream(`${targetPath}/${url}`, (data: any) => {
-                v.websocket.send(data)
-            })
-        })
-    })
+    recursiveFiles(fileArr, (data: any) => {
+        ctx.websocket.send(data)
+    }, ctx);
 
     ctx.websocket.on("message", (message) => {
         console.log("message", message);
@@ -68,5 +75,5 @@ app.ws.use((ctx) => {
 
 });
 
-console.log("服务启动，开启端口8080");
+console.log("服务启动，开启端口80");
 
