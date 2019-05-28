@@ -7,7 +7,7 @@ import WebSocket from "koa-websocket"
 
 const app = WebSocket(new Koa())
 const ctxs: any[] = []
-let fileArr: any[] = []
+let fileNames: any[] = []
 let targetPath = os.platform() == "win32" ? "./data/" : "../../record/"
 app.listen(80)
 
@@ -53,10 +53,29 @@ const broadcast = (data: string) => {
     })
 }
 
+const removeFiles = (files: any[]) => {
+    files.forEach(v => {
+        fs.unlink(targetPath + v, (err) => {
+            if (err) throw err;
+        })
+    })
+    files = [];
+}
+
 fs.readdir(targetPath, (err, files) => {
     if (err) throw err
-    fileArr = files
-    console.log(files)
+    fileNames = files
+    // removeFiles(fileNames)
+    console.log(fileNames)
+})
+
+fs.watch(targetPath, (event, filename) => {
+    console.log('event is: ' + event)
+    if (filename) {
+        console.log('filename provided: ' + filename)
+    } else {
+        console.log('filename not provided')
+    }
 })
 
 app.ws.use((ctx) => {
@@ -67,7 +86,7 @@ app.ws.use((ctx) => {
     ctx.websocket.send(`当前角色id：${ctx.query.id}`)
     broadcast(`当前连接人数：${ctxs.length}`)
 
-    recursiveFiles(fileArr, (data: any) => {
+    recursiveFiles(fileNames, (data: any) => {
         ctx.websocket.send(data)
     }, ctx)
 
