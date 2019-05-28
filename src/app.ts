@@ -7,8 +7,9 @@ import WebSocket from "koa-websocket";
 const app = WebSocket(new Koa());
 const ctxs: any[] = [];
 let fileArr: any[] = [];
-let targetPath = "./data";
-app.listen(8080);
+// let targetPath = "./data";
+let targetPath = "../record";
+app.listen(80);
 
 const readStream = (url: string, callback: Function) => {
 
@@ -36,8 +37,8 @@ const readStream = (url: string, callback: Function) => {
 
 fs.readdir(targetPath, (err, files) => {
     if (err) throw err;
-    console.log(files);
     fileArr = files;
+    console.log(files);
 });
 
 app.ws.use((ctx) => {
