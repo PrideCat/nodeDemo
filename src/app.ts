@@ -53,14 +53,14 @@ const broadcast = (data: string) => {
     })
 }
 
-const removeFiles = (files: any[]) => {
-    files.forEach(v => {
-        fs.unlink(targetPath + v, (err) => {
-            if (err) throw err;
-        })
-    })
-    files = [];
-}
+// const removeFiles = (files: any[]) => {
+//     files.forEach(v => {
+//         fs.unlink(targetPath + v, (err) => {
+//             if (err) throw err;
+//         })
+//     })
+//     files = [];
+// }
 
 fs.readdir(targetPath, (err, files) => {
     if (err) throw err
@@ -69,23 +69,18 @@ fs.readdir(targetPath, (err, files) => {
     console.log(fileNames)
 })
 
-fs.watch(targetPath, (event, filename) => {
-    console.log('event is: ' + event)
-    if (filename) {
-        console.log('filename provided: ' + filename)
-    } else {
-        console.log('filename not provided')
-    }
-})
-
 app.ws.use((ctx) => {
-
+    fs.watch(targetPath, (event, filename) => {
+        ctx.websocket.send('event is: ' + event)
+        if (filename) {
+            ctx.websocket.send('filename provided: ' + filename)
+        } else {
+            ctx.websocket.send('filename not provided')
+        }
+    })
     ctxs.push(ctx)
-    console.log("当前角色id：", ctx.query.id)
-    console.log("当前连接人数：", ctxs.length)
     ctx.websocket.send(`当前角色id：${ctx.query.id}`)
     broadcast(`当前连接人数：${ctxs.length}`)
-
     recursiveFiles(fileNames, (data: any) => {
         ctx.websocket.send(data)
     }, ctx)
