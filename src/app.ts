@@ -1,132 +1,215 @@
-
 import fs from "fs"
 import Koa from "koa"
-import os from "os"
 import route from "koa-route"
 import WebSocket from "koa-websocket"
-import koabody from "koa-body"
-
-// import { readStream, recursive } from "./utils/util"
+import { fsCopy, fsRemove, throwErr } from "./utils/util"
+import { exec } from "child_process"
+import api from "./utils/api"
 
 const koa = new Koa()
 const app = WebSocket(koa)
-const ctxs: Koa.Context[] = []
-// let fileNames: string[] = []
-// let storages: any = {}
-let targetPath = os.platform() == "win32" ? "data/" : "../../record/"
 
-koa.use(koabody({
-    multipart: true,
-    formidable: {
-        maxFieldsSize: 200 * 1024 * 1024
+const targetPath = "../../record/"
+const audioPath = "./data/"
+const users: any[] = []
+const onlines: any[] = []
+const videos: any[] = []
+
+const wsIsClose = (ctx: Koa.Context) => ctx.websocket.readyState !== 1
+
+// websocket发送消息
+const broadcast = (type: string, options: object | void) => {
+    const params = (options as any)
+    let msg: any
+    let filterArr: any[] = []
+    switch (type) {
+        case "onlineIds": {
+            msg = []
+            onlines.forEach((v) => msg.push(v.userId))
+            filterArr = onlines
+        } break
+        case "video": {
+            const video = params.video.data[0]
+            const videoId = video._id
+            const acceptId = video.acceptId
+            const sendId = video.sendId
+            const sendName = video.sendName
+            const outline = video.outline
+            msg = { videoId, acceptId, sendId, sendName, outline }
+            filterArr = onlines.filter(v => v.userId == acceptId)
+        } break
+        case "refusal": {
+            const acceptId = params.acceptId
+            const sendId = params.sendId
+            msg = 1
+            filterArr = onlines.filter(v => v.userId == acceptId || v.userId == sendId)
+        } break
+        case "open": {
+            const acceptId = params.acceptId
+            const sendId = params.sendId
+            const outline = params.outline
+            const videoId = params.videoId
+            msg = []
+            filterArr = onlines.filter(v => v.userId == acceptId || v.userId == sendId)
+            filterArr.forEach(v => msg.push(v.userId))
+            msg.reverse()
+            filterArr.forEach(async (v, i) => {
+                if (!wsIsClose(v.ctx)) v.ctx.websocket.send(JSON.stringify({ [type]: { videoId, outline, video: await api.ctrl.getUsers.dbapi({ userId: msg[i] }) } }))
+            })
+            filterArr = []
+        } break
+        case "end": {
+            let video: any = videos.filter(v => params.userId == v.sendId || params.userId == v.acceptId)
+            msg = 1
+            filterArr = []
+            if (video.length) {
+                videos.splice(videos.indexOf(video), 1)
+                video = video[0]
+                filterArr = onlines.filter(v => params.userId == video.sendId ? v.userId == video.acceptId : v.userId == video.sendId)
+            }
+        } break
+        case "editPaint":
+        case "savePaint": {
+            const videoId = params.videoId
+            const video = videos.filter(v => v._id == videoId)[0]
+            const userId = params.userId == video.sendId ? video.acceptId : video.sendId
+            msg = 1
+            filterArr = onlines.filter(v => v.userId == userId)
+        } break
+        case "updatePaint": {
+            const videoId = params.videoId
+            const picBase64 = params.picBase64
+            const video = videos.filter(v => v._id == videoId)[0]
+            msg = { picBase64 }
+            filterArr = onlines.filter(v => v.userId == video.sendId || v.userId == video.acceptId)
+        } break
     }
-}))
-app.ws.use(async (ctx, next: any) => await next(ctx))
-
-const broadcast = (data: string) => {
-    ctxs.forEach((v) => {
-        v.websocket.send(data)
-    })
+    msg = JSON.stringify({ [type]: msg })
+    console.log(type, filterArr.length, msg)
+    filterArr.forEach((v) => wsIsClose(v.ctx) ? "" : v.ctx.websocket.send(msg))
 }
 
-// const removeFiles = (files: string[]) => {
-//     files.forEach(v => {
-//         fs.unlink(targetPath + v, (err) => {
-//             if (err) throw err
-//         })
-//     })
-//     files = []
-// }
+api.use(koa)
+app.ws.use(async (ctx, next: Function) => await next(ctx))
 
-const send = (ctx: Koa.Context, data: any) => {
-    if (ctx.websocket.readyState === 1)
-        ctx.websocket.send(data)
-    else
-        console.log("websocket is close")
-}
+//监听nginx生成音频文件目录
+fs.watch(targetPath, (event, filename) => {
 
-// koa.use(route.post('/uploadFile', (ctx: any, params) => {
-//     const file = ctx.request.files.file;
-//     const reader = fs.createReadStream(file.path);
-//     const upStream = fs.createWriteStream(`data/${file.name}`); // 创建可写流
-//     reader.pipe(upStream);  // 可读流通过管道写入可写流
-//     console.log(ctx, params, file);
-//     return ctx.body = "上传成功";
-// }))
+    let audioNames: string[]
+    let audioName: string
 
+    if (event === "change" && filename.indexOf(".wav") > -1) {
+        users.forEach((v) => {
+            audioNames = v.audioNames
+            if (filename.indexOf(`userId${v.userId}`) > -1 && audioNames.indexOf(filename) < 0) {
+                audioNames.push(filename)
+                console.log(`userId==>${v.userId}   filename==>${filename}  namelen==>${audioNames.length}`)
+                if (audioNames.length > 1) {
+                    filename = audioNames[audioNames.length - 2]
+                    audioName = filename.split(".wav")[0]
+                    fs.mkdir(`${audioPath}${audioName}`, (err) => {
+                        if (throwErr(err)) return
+                        fsCopy(targetPath + filename, `${audioPath}${audioName}/${filename}`)
+                        exec(`cd bin && ./Demo.sh 1 1 ../${audioPath}${audioName}`, (err, stdout, srderr) => {
+                            if (err) {
+                                console.log(srderr)
+                            } else {
+                                console.log("输出内容：")
+                                // console.log(stdout)
+                                if (!wsIsClose(v.ctx)) v.ctx.websocket.send(stdout)
+                                fsRemove(`${audioPath}${audioName}/`)
+                            }
+                        })
+                    })
+                }
+            }
+        })
+    }
+})
 
+//连接双方视频通话时所用的websocket
+app.ws.use(route.all('/video', (ctx) => {
 
-app.ws.use(route.all('/', (ctx) => {
+    const userId = encodeURIComponent(ctx.query.userId)
+    const user = {
+        ctx,
+        userId,
+        audioNames: []
+    }
+    users.push(user)
 
-    // let flag = true
-    // let targetfiles: string[] = []
-    // let timer: NodeJS.Timeout
-
-    ctxs.push(ctx)
-    console.log(`当前角色id：${ctx.query.id}`)
-    console.log(`当前连接人数：${ctxs.length}`)
-    // send(ctx, `当前角色id：${ctx.query.id}`)
-    // broadcast(`当前连接人数：${ctxs.length}`)
-
-    fs.watch(targetPath, (event, filename) => {
-        if (event === "change" && filename.indexOf(".wav") !== -1) {
-            console.log(filename)
-            fs.readFile(targetPath + filename, (err, data) => {
-                if (err) return console.error(err)
-                send(ctx, data)
-            });
-        }
-    })
-
-
-    // timer = setInterval(() => {
-    //     fileNames = fs.readdirSync(targetPath)
-    //     if (flag && fileNames.length) {
-    //         flag = false
-    //         // targetfiles[0] = fileNames[fileNames.length - 2]
-    //         // targetfiles[1] = fileNames[fileNames.length - 1]
-    //         recursive(({ recursive, files = fileNames, i = 0 }: any) => {
-    //             const file = files[i]
-    //             let index = 0
-    //             console.log(`开始输出-文件==> ${file}`)
-    //             storages[file] = []
-    //             readStream(targetPath + file, (data: any) => {
-    //                 if (!storages[file][index] && data.length == 65536) {
-    //                     console.log("输出");
-    //                 }
-    //                 storages[file][index] = data
-    //                 send(ctx, data)
-    //                 index++
-    //             }, () => {
-    //                 console.log(`输出结束-文件==> ${file}`)
-    //                 i++
-    //                 if (i < files.length)
-    //                     recursive({ recursive, files, i })
-    //                 else
-    //                     flag = true
-    //             })
-    //         })
-    //         clearInterval(timer)
-    //     }
-    // }, 500)
+    console.log(`当前角色id：${userId}`)
+    console.log(`当前连接人数：${users.length}`)
 
     ctx.websocket.on("message", (message) => {
         console.log("message", message)
-        // send(ctx, `收到客户端：${message}`)
     })
 
     ctx.websocket.on("close", (code, reason) => {
         console.log("close", code, reason)
-        let index = ctxs.indexOf(ctx)
-        // removeFiles(fileNames)
-        // clearInterval(timer)
-        ctxs.splice(index, 1)
-        broadcast(`当前连接人数：${ctxs.length}`)
+        users.splice(users.indexOf(user), 1)
+        broadcast("end", { userId: ctx.query.userId })
     })
 
 }))
 
-app.listen(80)
+//连接用户记录各种状态的websocket
+app.ws.use(route.all('/ws', (ctx) => {
 
-console.log("服务启动，开启端口80")
+    const userId = ctx.query.userId
+    const online = {
+        ctx,
+        userId,
+        relativeUserId: ""
+    }
 
+    if (!onlines.filter(v => v.userId === online.userId).length) onlines.push(online)
+    console.log(onlines.length)
+    broadcast("onlineIds")
+
+    api.ctrl.addVideo.callback = async (videoRes: any) => {
+        console.log(videoRes)
+        broadcast("video", { video: videoRes })
+        videos.push(videoRes.data[0])
+    }
+
+    ctx.websocket.on("message", (msg: any) => {
+        console.log("message", msg)
+        let type: string = ""
+        msg = JSON.parse(msg)
+        if (msg.refusal) {
+            type = "refusal"
+            msg = { sendId: msg[type].sendId, acceptId: msg[type].acceptId }
+        }
+        if (msg.open) {
+            type = "open"
+            msg = { sendId: msg[type].sendId, acceptId: msg[type].acceptId, videoId: msg[type].videoId, outline: msg[type].outline }
+        }
+        if (msg.editPaint) {
+            type = "editPaint"
+            msg = { videoId: msg[type].videoId, userId: msg[type].userId }
+        }
+        if (msg.savePaint) {
+            type = "savePaint"
+            msg = { videoId: msg[type].videoId, userId: msg[type].userId }
+        }
+        if (msg.updatePaint) {
+            type = "updatePaint"
+            msg = { videoId: msg[type].videoId, picBase64: msg[type].picBase64 }
+        }
+        if (type) broadcast(type, msg)
+    })
+
+    ctx.websocket.on("close", (code, reason) => {
+        console.log("close", code, reason, online.userId)
+        onlines.forEach((v, i) => {
+            if (v.userId == online.userId) onlines.splice(i, 1)
+        })
+        broadcast("onlineIds")
+    })
+
+}))
+
+app.listen(8001)
+
+console.log("服务启动，开启端口8001")

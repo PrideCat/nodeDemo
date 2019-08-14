@@ -4,18 +4,18 @@
     "version": "2.0.0",
     "tasks": [{
         "type": "typescript",
-        "tsconfig": "../../e:/nodeDemo/tsconfig.json",
+        "tsconfig": "tsconfig.json",
         "label": "tsc",
-        "problemMatcher": [
-            "$tsc"
-        ],
         "presentation": {
             "echo": true,
             "reveal": "silent",
             "focus": false,
             "panel": "shared",
-            "showReuseMessage": true,
-            "clear": false
-        }
+            "showReuseMessage": false,
+            "clear": true
+        },
+        "problemMatcher": [
+            "$tsc"
+        ]
     }]
 }
