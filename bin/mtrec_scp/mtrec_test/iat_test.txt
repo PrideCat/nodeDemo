@@ -1,0 +1,1 @@
+param_1:url=10.28.140.27:1028&appid=pc20onli&sn=c|param_2:appid=pc20onli&url=10.28.140.27:1028&svc=iat&auf=audio/L16;rate=16000&aue=raw&type=1&uid=660Y5r|path:./mtrec_scp/wavon/iflytek-16k.wav

@@ -1,0 +1,9 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+SCYSessionBegin ,param=svc=iat&auf=audio/L16;rate=16000&aue=raw&lang=zh_cn&type=1&uid=660Y5r&robot_id=6134e
+SCYAudioWrite
+SCYGetResult
+SCYSessionEnd
+
+

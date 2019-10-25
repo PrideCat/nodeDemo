@@ -1,0 +1,9 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+SCYMTAuthLogin ,param=url=172.31.3.83:1039&appid=pc20onli&sn=c
+SCYMTNLP ,param=svc=nlp&org=unicom&appid=pc20onli&url=172.31.3.82:1028&iss_uid=5577&newsess=0&res_node_lst=123#123#gg&res_parse_mode=big&only_fill_slot=true
+#SCYMTNLP ,param=svc=nlp&channel_id=12345678&appid=jhsyy000&url=172.31.3.83:1039&iss_uid=5577&newsess=0&res_node_lst=123#123#gg&res_parse_mode=big&only_fill_slot=true
+#SCYMTNLP ,param=svc=nlp&username=test&org=test&appid=pc20onli&url=172.31.3.82:1028&iss_uid=5577&newsess=0&res_node_lst=123#123#gg&res_parse_mode=big&only_fill_slot=true&ability=ab_nlp&area=anhui
+#SCYMTNLP ,param=svc=nlp&username=test&org=test&appid=pc20onli&url=172.31.3.82:1028&iss_uid=5577&newsess=0&res_node_lst=123#123#gg&res_parse_mode=big&extend_params={"params":"token=D2572A0D-574E-4C81-A49A-DFD159AFDDA2&ability=ab_nlp&flume_id=key1|value1;key2|value2;key3|value3"}
+SCYMTAuthLogout ,param=url=172.31.3.83:1039&appid=pc20onli&sn=c

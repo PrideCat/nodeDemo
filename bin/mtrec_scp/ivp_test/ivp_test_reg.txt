@@ -1,0 +1,1 @@
+aa;audio_path=/home/clchen4/ipcs/IPCS/bin_redhat6.5/Mtrec/bin/mtrec_scp/wave/ivp/free_login.wav

@@ -1,0 +1,10 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+#SCYMTAuthLogin ,param=url=172.31.3.91:1028&appid=pc20onli&sn=c
+SCYSessionBegin ,param=appid=trans001&url=10.28.140.27:1028&svc=src&scenes=iat;itr&scenes_params={"iat":"svc=iat&auf=audio/L16;rate=16000&aue=raw&type=1&uid=660Y5r"|"itr":"type=cnug"}&extend_params={"params":"token=aipp21src&ability=ab_asr&iat_itr=1"}
+SCYAudioWrite ,param=length=2560
+SCYGetResult
+SCYSessionEnd
+#SCYMTAuthLogout ,param=url=172.31.3.91:1028&appid=pc20onli&sn=c
+

@@ -1,0 +1,9 @@
+aa;image_path=F:/tmp_test/12.jpg
+bb;image_path=F:/tmp_test/13.jpg
+cc;image_path=F:/tmp_test/14.jpg
+dd;image_path=F:/tmp_test/15.jpg
+ee;image_path=F:/tmp_test/16.jpg
+ff;image_path=F:/tmp_test/17.jpg
+rr;image_path=F:/tmp_test/18.jpg
+gg;image_path=F:/tmp_test/19.jpg
+tt;image_path=F:/tmp_test/20.jpg

@@ -1,0 +1,1 @@
+{"control":"normalize|punctuate|combine","text":"²ğ³ı{teeth_pos:×óÉÏ-56}¹Ì¶¨ÇÅ","type":"´¦ÖÃ"}

@@ -1,0 +1,9 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+SCYSessionBegin ,param=appid=pc20onli&url=172.31.3.83:1030/iat/&svc=iatnlp&auf=audio/L16;rate=16000&aue=raw&lang=zh_cn&type=1&uid=660Y5r
+SCYAudioWrite
+SCYGetResult
+SCYSessionEnd
+
+

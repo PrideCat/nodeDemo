@@ -1,0 +1,1 @@
+param_1:url=172.31.3.84:1028&appid=pc20onli&sn=c|param_2:vid=65040&auf=4&aue=raw&svc=tts&type=1&uid=660Y2r&appid=pc20onli&url=172.31.3.84:1028|path:./mtrec_scp/text/1.txt

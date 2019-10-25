@@ -1,0 +1,27 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+
+SCYIVWInitialize
+SCYIVWResourceAdd ,param="{"nResID":1000,"strType":"IVW_MLP","szRes":"ivw_res/mlp.19.mid_nocmn.bin","IVW_RES_LOCATION": 1}"
+SCYIVWResourceAdd ,param="{"nResID":2000,"strType":"IVW_FILLER","szRes":"ivw_res/state_filler_3000s_kladi_1179.txt","IVW_RES_LOCATION":1}"
+SCYIVWResourceAdd ,param="{"nResID":3000,"strType":"IVW_KEYWORD","szRes":"ivw_res/xanh.irf","IVW_RES_LOCATION":1}"
+SCYCreateRecord ,param=aue=raw
+SCYIVWCreateInst 
+SCYIVWSetParams ,param="{"param":"wivw_param_sid","paramValue":"TEST"}"
+SCYIVWStart ,param="{"szFuncType":"func_wake_up","pValue":"ivw_engine_from_iflytek"}"
+sleep ,param=10000
+#SCYIVWAudioWrite ,param="{"FileName":"out.pcm"}"
+SCYDestroyRecord
+SCYIVWStop
+SCYIVWDestoryInst
+SCYIVWResourceDel
+SCYIVWUninitialize
+
+
+#SCYCreateRecord ,param=aue=raw&vad_res=F:/mix_scylla/bin/meta_vad_16k.jet
+#sleep ,param=10000
+#SCYDestroyRecord
+#SCYCreateRecord ,param=aue=speex-wb
+#sleep ,param=5000
+#SCYDestroyRecord

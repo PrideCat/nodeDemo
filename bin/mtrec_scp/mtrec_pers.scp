@@ -1,0 +1,8 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+SCYMTAuthLogin ,param=url=172.31.3.84:1028&appid=pc20onli&sn=c
+SCYMTPersLogin ,param=appid=pc20onli&url=172.31.3.84:1028&uid=123yy66
+SCYMTUploadData ,param=appid=pc20onli&url=172.31.3.84:1028&res_type=0&subcmd=upload
+SCYMTDownloadData ,param=appid=pc20onli&url=172.31.3.84:1028&res_type=0&subcmd=download
+SCYMTAuthLogout ,param=url=172.31.3.84:1028&appid=pc20onli&sn=c

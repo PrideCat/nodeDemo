@@ -1,0 +1,25 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+#SCYBIOvoiceSessionBegin ,param=appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=16000&cmd=ssb&sst=train
+#SCYBIOvoiceAudioWrite ,param=appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&aue=raw&auf=audio/L16;rate=16000&cmd=ssb&sst=train&audio_path=/home/clchen4/ipcs/IPCS/bin_redhat6.5/Mtrec/bin/mtrec_scp/wave/ivp/free_login.wav
+
+#SCYBIOvoiceSessionBegin ,param=url=172.31.3.128:9220&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=16000&cmd=ssb&sst=verify
+#
+#SCYBIOVocalPrintEntrace ,param=url=172.31.3.128:9220&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=16000&cmd=ssb&sst=train
+
+#重注册
+SCYBIOVocalPrintFirst ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=retrain
+SCYBIOVocalPrintSecond ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=retrain
+
+#认证
+SCYBIOVocalPrintFirst ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=verify
+SCYBIOVocalPrintSecond ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=verify
+
+#删除
+SCYBIOVocalPrintFirst ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=delete
+ 
+
+#注册
+SCYBIOVocalPrintFirst ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=train
+SCYBIOVocalPrintSecond ,param=url=172.31.3.128:9222&appid=pc20onli&platform=Android&svc=ivp&work_mode=free_mode&ssm=0&rgn=1&aue=raw&auf=audio/L16;rate=8000&cmd=ssb&sst=train

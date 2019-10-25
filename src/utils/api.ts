@@ -51,13 +51,26 @@ const api: api = {
 
     },
     ctrl: {
+        /**
+         * 添加用户
+         */
         addUser: {
+            /**
+             * 编辑传入的参数
+             * @ctx
+             */
             async api(ctx: Koa.Context) {
                 const name = ctx.request.body.name
                 const userId = ctx.request.body.userId
                 const teamName = ctx.request.body.teamName
                 return ctx.body = await api.ctrl.addUser.dbapi(name, userId, teamName)
             },
+            /**
+             * 操作数据库返回数据
+             * @name 用户名
+             * @userId 用户id
+             * @teamName 部门名称
+             */
             async dbapi(name: string, userId: string, teamName: string) {
                 const hasUser = await api.ctrl.getUsers.dbapi({ userId })
                 if ((<any[]>hasUser.data).length) {

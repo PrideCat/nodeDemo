@@ -1,0 +1,6 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+#SCYMTAuthLogin ,param=url=172.31.3.83:1039&appid=pc20onli&sn=c
+SCYMTTranslate ,param=type=cnen&uid=660Y5r&appid=pc20onli&url=172.31.3.16:1028&iat_itr=1
+#SCYMTAuthLogout ,param=url=172.31.3.83:1039&appid=pc20onli&sn=c

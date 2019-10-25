@@ -1,0 +1,14 @@
+# =============================================================================
+# =============================================================================
+subject scylla
+SCYMTAuthLogin ,param=url=172.31.3.82:1028&appid=pc20onli&sn=c
+SCYSessionBegin ,param=vid=65040&auf=4&aue=raw&svc=tts&type=1&uid=660Y5r&appid=pc20onli&url=172.31.3.91:1028&extend_params={"params":"spd=300&area=anhui&ability=ab_tts"}
+#SCYSessionBegin ,param=vid=65040&auf=4&aue=raw&svc=tts&type=1&uid=660Y5r&appid=pc20onli&url=172.31.3.82:1028&extend_params={"params":"token=D2572A0D-574E-4C81-A49A-DFD159AFDDA2&ability=ab_tts&flume_id=key1|value1;key2|value2;key3|value3&spd=300"}
+#SCYMTTSSetParams ,param=ahf=1&spd=300
+#SCYMTTSGetParam ,param=ahf
+#QttsGetVoiceInfo
+SyncText
+FetchNext
+#QttsFetchNext
+SCYSessionEnd
+SCYMTAuthLogout ,param=url=172.31.3.82:1028&appid=pc20onli&sn=c
