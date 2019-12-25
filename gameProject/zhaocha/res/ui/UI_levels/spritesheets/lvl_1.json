@@ -1,0 +1,20 @@
+{"frames": [
+
+{
+	"filename": "bg1.png",
+	"frame": {"x":0,"y":0,"w":512,"h":675},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":512,"h":675},
+	"sourceSize": {"w":512,"h":675}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "lvl_1.png",
+	"format": "RGBA8888",
+	"size": {"w":512,"h":675},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:52d6b70cb47a3c6bf63ca1ddcdd88147:f11a2b61e2a590574b8f02239e6d34f5:5d5131679e386eb069a86d3abb239676$"
+}
+}

@@ -1,0 +1,32 @@
+{
+    "en": {
+        "new": "NEW",
+        "found": "FOUND",
+        "differences": "DIFFERENCES",
+        "timesup": "TIME'S UP!",
+        "levelselection": "LEVEL SELECTION",
+        "total": "TOTAL",
+        "locked": "LOCKED",
+        "locked_description": "FIND %%N%% DIFFERENCES TO UNLOCK",
+        "resetdata": "Reset Data",
+        "credits": "Credits",
+        "back": "Back",
+
+        "confirmation_clear": "Sure you want to\nclear the progress?",
+        "confirmation_exit": "Sure you want to exit?",
+        "confirmation_restart": "Sure you want \nrestart the level?",
+        "yes": "Yes",
+        "no": "No",
+
+        "continue": "Continue",
+        "restart": "Restart",
+        "exit": "Exit",
+
+        "total_lc": "TOTAL",
+        "found_lc": "FOUND",
+        "new_lc": "NEW",
+        "diff_lc": "DIFFERENCES",
+        "timeUp_lc": "TIME'S UP!",
+        "levelCompleted": "Level Completed!"
+    }
+}

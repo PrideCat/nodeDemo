@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+</head>
+
+<body>
+    <div class="run-main run-main1" style="
+        background: #fff;
+        justify-content: center;
+    ">
+        <div style="
+        text-align: center;
+        font-size: 44px;
+        line-height: 1.5;
+        margin-bottom: 10vh;
+        color: #000;
+    ">
+            <p style="
+        font: inherit;
+        color: inherit;
+    ">专业、服务</p>
+            <p style="
+        font: inherit;
+        color: inherit;
+    ">进取、结果</p>
+        </div>
+        <div><img id="toindex" src="./img/A-5-04_03.jpg" style="
+        margin: 0 auto;
+        display: block;
+        width: 50vw;
+    "></div>
+    </div>
+    <script>
+        $("#toindex").click(function () {
+            try {
+                plus.webview.getWebviewById("redEnvelope").close();
+                plus.webview.getWebviewById("result").close();
+            } catch (e) {
+                window.location.href = "./index.html";
+            }
+        })
+    </script>
+</body>
+
+</html>

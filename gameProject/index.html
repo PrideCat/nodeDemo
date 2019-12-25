@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="./css/common.css">
+    <style>
+        .run-main {
+            background: #fff;
+        }
+
+        ul {
+            display: flex;
+            text-align: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        ul li {
+            width: 26vw;
+            margin-top: 5vh;
+        }
+
+        ul li div:first-child img {
+            width: 15vw;
+            height: 15vw;
+            margin-bottom: 2vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="run-main">
+        <ul></ul>
+    </div>
+    <script>
+        var urls = [
+            { name: "下一个数字", jumpUrl: "./nextNumber/index.htm", bgImgUrl: "./img/7809d40d01b29156ca9c9132409d2c88.png" },
+            { name: "最强大脑", jumpUrl: "./danao/index.html", bgImgUrl: "./img/091712_6420.jpg" },
+            { name: "拼图", jumpUrl: "./pingtu/game.htm", bgImgUrl: "./img/4399_16451698931.jpg" },
+            { name: "大家来找茬", jumpUrl: "./zhaocha/game.html", bgImgUrl: "./img/4399_14371520333.jpg" },
+            { name: "", jumpUrl: "", bgImgUrl: "" },
+            { name: "", jumpUrl: "", bgImgUrl: "" }
+        ]
+        localStorage.gameItems = JSON.stringify(urls);
+        urls.forEach(function (v) {
+            $("ul").append(
+                '<li>\
+                    <div>\
+                        '+ (v.bgImgUrl ? '<img src="' + v.bgImgUrl + '">' : '') + '\
+                    </div>\
+                    <div>'+ v.name + '</div>\
+                </li>'
+            )
+        })
+        $("ul li").click(function () {
+            var i = $(this).index();
+            if (!urls[i].jumpUrl) return;
+            localStorage.gameIndex = i;
+            window.location.href = urls[i].jumpUrl;
+        });
+    </script>
+</body>
+
+</html>

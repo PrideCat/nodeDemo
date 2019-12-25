@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/mui.min.css">
+    <style>
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="run-main" style="position: relative;">
+        <ul>
+            <li class="hide">
+                <p style="text-align: center;padding: 20px;font-size: 20px;color: #000;">对应审计方法或思路：盘点法</p>
+                <p style="padding: 20px;padding-top: 0;padding-bottom: 10px;font-size: 16px;line-height: 1.5;">具体说明：</p>
+                <p style="padding: 20px;padding-top: 0;font-size: 16px;line-height: 1.5;text-indent: 2em;">
+                    短时间内快速盘点。审计离不开盘点。很多时候，盘点是审计人员最近距离接触存货的机会。走出办公室，了解存货和业务，审计人员才能了解被审计单位，并发现风险。
+                </p>
+            </li>
+            <li class="hide">
+                <p style="text-align: center;padding: 20px;font-size: 20px;color: #000;">对应审计方法或思路：思维创新法</p>
+                <p style="padding: 20px;padding-top: 0;padding-bottom: 10px;font-size: 16px;line-height: 1.5;">具体说明：</p>
+                <p style="padding: 20px;padding-top: 0;font-size: 16px;line-height: 1.5;text-indent: 2em;">
+                    换个角度看问题。面对外部日益变化的市场环境和内部不同的管理需求，审计部门如果不通过创新手段来改进审计工作，那么审计工作将停留于原来的工作理念、思路、方法，跟不上企业的前进步伐。在平常稽核工作中，要在惯性思维之外学会用另外的角度去核实解决问题。
+                </p>
+            </li>
+            <li class="hide">
+                <p style="text-align: center;padding: 20px;font-size: 20px;color: #000;">对应审计方法或思路：逻辑思维法</p>
+                <p style="padding: 20px;padding-top: 0;padding-bottom: 10px;font-size: 16px;line-height: 1.5;">具体说明：</p>
+                <p style="padding: 20px;padding-top: 0;font-size: 16px;line-height: 1.5;text-indent: 2em;">
+                    从事审计这项工作，逻辑思维必然严谨。如果在工作前掌握了一定的逻辑思维方法，不用再为具体形式所困，万变不离其宗，将会起到四两拨千斤的效果。如同拼图游戏，在审计日常工作中，需要找到碎片化线索的关联性、内在逻辑和关系从而整合思路进行检查。
+                </p>
+            </li>
+            <li class="hide">
+                <p style="text-align: center;padding: 20px;font-size: 20px;color: #000;">对应审计方法或思路：观察法</p>
+                <p style="padding: 20px;padding-top: 0;padding-bottom: 10px;font-size: 16px;line-height: 1.5;">具体说明：</p>
+                <p style="padding: 20px;padding-top: 0;font-size: 16px;line-height: 1.5;text-indent: 2em;">
+                    对内部控制制度的执行等进行直接的观看视察，注意其是否符合审计标准和书面资料的记载，从中发现薄弱环节和存在的问题，借以收集书面资料以外的证据。充分收集证据，是搞好审计的关键。如同找茬游戏，在稽核工作中要善于观察，找出稽核材料中的细微差别，以小见大，以窥全貌。
+                </p>
+            </li>
+        </ul>
+        <p id="nextGameBtn"
+            style="text-align: center;margin-top: 50px;font-size: 18px;color: #2196F3;text-decoration: underline;">
+            点击进入下一游戏</p>
+        <div style="position: absolute;bottom: 0;left: 0;"><img src="./img/menu-bg.png" /></div>
+    </div>
+    <script>
+        var i = localStorage.gameIndex;
+        var gameItems = JSON.parse(localStorage.gameItems);
+        var gameIndex = i * 1 + 1;
+        var data = gameItems[gameIndex];
+        $(".run-main ul li:eq(" + i + ")").removeClass("hide");
+        if (i == 3) {
+            $("#nextGameBtn").text("点击继续");
+        }
+        $("#nextGameBtn").click(function () {
+            if (i == 3) {
+                try {
+                    plus.webview.getWebviewById("gameView").close();
+                    plus.webview.getWebviewById("directions").close();
+                    var redEnvelope = plus.webview.create('./redEnvelope.html', "redEnvelope");
+                    redEnvelope.evalJS('plus.key.addEventListener("backbutton", function () {plus.webview.currentWebview().close();});');
+                    redEnvelope.show();
+                } catch (e) {
+                    window.location.href = "./redEnvelope.html";
+                }
+            } else {
+                if (data.name == "大家来找茬") {
+                    try {
+                        plus.screen.lockOrientation("landscape-primary");
+                    } catch (error) { }
+                }
+                localStorage.gameIndex = gameIndex;
+                try {
+                    plus.webview.getWebviewById("gameView").close();
+                    plus.webview.getWebviewById("directions").close();
+                    var gameView = plus.webview.create(data.jumpUrl, "gameView");
+                    gameView.evalJS('plus.key.addEventListener("backbutton", function () {plus.webview.currentWebview().close();plus.screen.lockOrientation("portrait-primary");});');
+                    gameView.show();
+                } catch (e) {
+                    window.location.href = data.jumpUrl;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

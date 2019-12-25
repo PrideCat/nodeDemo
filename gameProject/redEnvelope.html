@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script type="text/javascript" src="./js/jquery-1.11.3.min.js"></script>
+    <link rel="stylesheet" href="./css/common.css">
+    <link rel="stylesheet" href="./css/mui.min.css">
+</head>
+
+<body>
+    <div class="run-main" style="position: relative;height: 100vh;overflow: hidden;">
+        <div style="background: #f25c4d;flex: 1;"></div>
+        <img style="width: 100%;" src="./img/20191220143528.jpg" alt="">
+        <div style="background: #f65742;flex: 1;"></div>
+        <a id="toResult"
+            style="position: absolute;bottom: 0;left: 0;right: 0;top: 0;width: 38.5vw;height: 38.5vw;margin: auto;border-radius: 50%;transform: translate(-0.6vw,32.7vw);"></a>
+    </div>
+    <script>
+        $("#toResult").click(function () {
+            try {
+                var result = plus.webview.create('./result.html', "result");
+                result.evalJS('plus.key.addEventListener("backbutton", function () {plus.webview.currentWebview().close();});');
+                result.show();
+            } catch (error) {
+                window.location.href = "./result.html";
+            }
+        });
+    </script>
+</body>
+
+</html>

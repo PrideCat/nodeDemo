@@ -4,13 +4,11 @@ import route from "koa-route"
 import WebSocket from "koa-websocket"
 import { fsCopy, fsRemove, throwErr } from "./utils/util"
 import { exec } from "child_process"
-import api from "./utils/api"
+// import api from "./utils/api"
+import { targetPath, audioPath, primaryPath, port } from "./config"
 
 const koa = new Koa()
 const app = WebSocket(koa)
-
-const targetPath = "../../record/"
-const audioPath = "./data/"
 const users: any[] = []
 const onlines: any[] = []
 const videos: any[] = []
@@ -29,14 +27,8 @@ const broadcast = (type: string, options: object | void) => {
             filterArr = onlines
         } break
         case "video": {
-            const video = params.video.data[0]
-            const videoId = video._id
-            const acceptId = video.acceptId
-            const sendId = video.sendId
-            const sendName = video.sendName
-            const outline = video.outline
-            msg = { videoId, acceptId, sendId, sendName, outline }
-            filterArr = onlines.filter(v => v.userId == acceptId)
+            msg = params
+            filterArr = onlines.filter(v => v.userId == params.acceptId)
         } break
         case "refusal": {
             const acceptId = params.acceptId
@@ -47,14 +39,12 @@ const broadcast = (type: string, options: object | void) => {
         case "open": {
             const acceptId = params.acceptId
             const sendId = params.sendId
-            const outline = params.outline
-            const videoId = params.videoId
             msg = []
             filterArr = onlines.filter(v => v.userId == acceptId || v.userId == sendId)
             filterArr.forEach(v => msg.push(v.userId))
             msg.reverse()
-            filterArr.forEach(async (v, i) => {
-                if (!wsIsClose(v.ctx)) v.ctx.websocket.send(JSON.stringify({ [type]: { videoId, outline, video: await api.ctrl.getUsers.dbapi({ userId: msg[i] }) } }))
+            filterArr.forEach((v) => {
+                if (!wsIsClose(v.ctx)) v.ctx.websocket.send(JSON.stringify({ [type]: params }))
             })
             filterArr = []
         } break
@@ -71,7 +61,7 @@ const broadcast = (type: string, options: object | void) => {
         case "editPaint":
         case "savePaint": {
             const videoId = params.videoId
-            const video = videos.filter(v => v._id == videoId)[0]
+            const video = videos.filter(v => v.videoId == videoId)[0]
             const userId = params.userId == video.sendId ? video.acceptId : video.sendId
             msg = 1
             filterArr = onlines.filter(v => v.userId == userId)
@@ -79,7 +69,7 @@ const broadcast = (type: string, options: object | void) => {
         case "updatePaint": {
             const videoId = params.videoId
             const picBase64 = params.picBase64
-            const video = videos.filter(v => v._id == videoId)[0]
+            const video = videos.filter(v => v.videoId == videoId)[0]
             msg = { picBase64 }
             filterArr = onlines.filter(v => v.userId == video.sendId || v.userId == video.acceptId)
         } break
@@ -89,15 +79,25 @@ const broadcast = (type: string, options: object | void) => {
     filterArr.forEach((v) => wsIsClose(v.ctx) ? "" : v.ctx.websocket.send(msg))
 }
 
-api.use(koa)
+// api.use(koa)
+
+koa.use(async (ctx, next: any) => {
+    await ctx.set('Access-Control-Allow-Origin', '*')
+    await next(ctx)
+})
+
+koa.use(route.get(primaryPath + 'hi', (ctx) => {
+    ctx.body = {
+        isok: true
+    }
+}))
+
 app.ws.use(async (ctx, next: Function) => await next(ctx))
 
 //监听nginx生成音频文件目录
 fs.watch(targetPath, (event, filename) => {
-
     let audioNames: string[]
     let audioName: string
-
     if (event === "change" && filename.indexOf(".wav") > -1) {
         users.forEach((v) => {
             audioNames = v.audioNames
@@ -128,7 +128,7 @@ fs.watch(targetPath, (event, filename) => {
 })
 
 //连接双方视频通话时所用的websocket
-app.ws.use(route.all('/video', (ctx) => {
+app.ws.use(route.all(primaryPath + 'video', (ctx) => {
 
     const userId = encodeURIComponent(ctx.query.userId)
     const user = {
@@ -154,7 +154,7 @@ app.ws.use(route.all('/video', (ctx) => {
 }))
 
 //连接用户记录各种状态的websocket
-app.ws.use(route.all('/ws', (ctx) => {
+app.ws.use(route.all(primaryPath + 'ws', (ctx) => {
 
     const userId = ctx.query.userId
     const online = {
@@ -167,23 +167,29 @@ app.ws.use(route.all('/ws', (ctx) => {
     console.log(onlines.length)
     broadcast("onlineIds")
 
-    api.ctrl.addVideo.callback = async (videoRes: any) => {
-        console.log(videoRes)
-        broadcast("video", { video: videoRes })
-        videos.push(videoRes.data[0])
-    }
+    // api.ctrl.addVideo.callback = async (videoRes: any) => {
+    //     console.log(videoRes)
+    //     broadcast("video", { video: videoRes })
+    //     videos.push(videoRes.data[0])
+    // }
 
     ctx.websocket.on("message", (msg: any) => {
         console.log("message", msg)
         let type: string = ""
         msg = JSON.parse(msg)
+        if (msg.video) {
+            type = "video"
+            msg = msg.video
+        }
         if (msg.refusal) {
             type = "refusal"
             msg = { sendId: msg[type].sendId, acceptId: msg[type].acceptId }
         }
         if (msg.open) {
             type = "open"
-            msg = { sendId: msg[type].sendId, acceptId: msg[type].acceptId, videoId: msg[type].videoId, outline: msg[type].outline }
+            msg = msg.open
+            videos.push(msg)
+            // msg = { sendId: msg[type].sendId, acceptId: msg[type].acceptId, videoId: msg[type].videoId, outline: msg[type].outline }
         }
         if (msg.editPaint) {
             type = "editPaint"
@@ -210,6 +216,6 @@ app.ws.use(route.all('/ws', (ctx) => {
 
 }))
 
-app.listen(8001)
+app.listen(port)
 
-console.log("服务启动，开启端口8001")
+console.log(`服务启动，开启端口${port}`)

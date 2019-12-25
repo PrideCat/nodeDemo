@@ -3,6 +3,7 @@ import route from "koa-route"
 import { asyncAwaitFn, throwErr } from "./util"
 import { Model, Document, connect, model, Schema } from "mongoose"
 import koabody from "koa-body"
+import { primaryPath } from "../config"
 
 interface api {
     use(koa: Koa<any, {}>): void
@@ -21,7 +22,8 @@ const api: api = {
 
         koa.use(koabody({ multipart: true, formidable: { maxFieldsSize: 200 * 1024 * 1024 } }))
 
-        connect('mongodb://127.0.0.1:27017/test', { useNewUrlParser: true }, (err) => {
+
+        connect('mongodb://root:asd1234-@127.0.0.1:27017/test?authSource=admin', { useNewUrlParser: true }, (err) => {
             if (throwErr(err)) return
             console.log("数据库连接成功！")
         })
@@ -46,7 +48,7 @@ const api: api = {
         }))
 
         for (let k in this.ctrl) {
-            koa.use(route.post(`/${k}`, this.ctrl[k].api))
+            koa.use(route.post(primaryPath + k, this.ctrl[k].api))
         }
 
     },

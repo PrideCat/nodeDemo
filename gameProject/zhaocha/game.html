@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Monster Mirror - Cangrejo Ideas</title>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="Phaser App">
+    <meta id="viewport" name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0" />
+    <meta name="full-screen" content="yes" />
+    <meta name="screen-orientation" content="landscape" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+
+    <link href="res/cifw/css/styles.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="res/css/styles.css" media="screen" rel="stylesheet" type="text/css">
+    <link rel="icon" href="res/favicon/favicon.ico">
+
+    <!-- Include the SPILGAMES HTML5 API files -->
+    <script type="text/javascript" src="./game.js"></script>
+
+
+    <script src="src/game.min.js"></script>
+
+</head>
+
+<body style="padding:0; margin: 0; background: #1c1c1c;">
+
+    <div id="gameContainer"></div>
+
+    <script type="text/javascript" src="res/cifw/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="res/cifw/js/underscore.min.js"></script>
+
+    <!-- declare the 'SpilData' object and the app ID property -->
+    <script type="text/javascript">
+        var SpilData = {
+            id: '576742227280294284'
+        };
+        var buttonData;
+        var moreGamesData;
+        GameAPI.loadAPI(function (apiInstance) {
+            //splash
+
+            startGame();
+
+            apiInstance.Branding.displaySplashScreen(function () {
+                //            gameStart.state.start('BootState');
+            }, this);
+
+            // Retrieves the logo from Spil
+            buttonData = apiInstance.Branding.getLogo();
+            moreGamesData = apiInstance.Branding.getLink('more_games');
+
+        }, SpilData);
+
+    </script>
+
+
+</body>
+
+</html>
